@@ -37,7 +37,7 @@ func intersect(p1, p2, q1, q2 Coordinate) bool {
 	}
 
 	minQ = math.Min(q1.y, q2.y)
-	maxQ = math.Max(q2.y, q2.y)
+	maxQ = math.Max(q1.y, q2.y)
 	minP = math.Min(p1.y, p2.y)
 	maxP = math.Max(p1.y, p2.y)
 
@@ -91,6 +91,18 @@ func NewEmptyEnvelope() Envelope {
 	}
 }
 
+// Copy constructor
+func CopyEnvelope(other Envelope) Envelope {
+	return Envelope{
+		minX: other.minX,
+		maxX: other.maxX,
+		minY: other.minY,
+		maxY: other.maxY,
+	}
+}
+
+// Makes this Envelope a "null" envelope, that is, the envelope
+// of the empty geometry.
 func (e *Envelope) setToNull() {
 	e.minX = 0
 	e.maxX = -1
@@ -101,6 +113,14 @@ func (e *Envelope) setToNull() {
 // Returns true, if this Envelope is a "null" Envelope
 func (e *Envelope) isNull() bool {
 	return e.maxX < e.minX
+}
+
+// Initialize an Envelope from an existing Envelope.
+func (e *Envelope) init(env Envelope) {
+	e.minX = env.minX
+	e.maxX = env.maxX
+	e.minY = env.minY
+	e.maxY = env.maxY
 }
 
 // Returns the difference between the maximum and minimum x values.
@@ -166,7 +186,7 @@ func (e *Envelope) maxExtent() float64 {
 func (e *Envelope) expandToInclude(x, y float64) {
 	if e.isNull() {
 		e.minX = x
-		e.maxY = x
+		e.maxX = x
 		e.minY = y
 		e.maxY = y
 	} else {
@@ -361,7 +381,7 @@ func (e *Envelope) coversEnvelope(other Envelope) bool {
 		return false
 	}
 	return other.minX >= e.minX &&
-		other.maxY <= e.maxX &&
+		other.maxX <= e.maxX &&
 		other.minY >= e.minY &&
 		other.maxY <= e.maxY
 }
@@ -463,4 +483,13 @@ func (e *Envelope) compareTo(other Envelope) int {
 		return 1
 	}
 	return 0
+}
+
+func (e *Envelope) copy() Envelope {
+	return Envelope{
+		minX: e.minX,
+		maxX: e.maxX,
+		minY: e.minY,
+		maxY: e.maxY,
+	}
 }

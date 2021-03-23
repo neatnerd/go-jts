@@ -150,7 +150,7 @@ func (c *Coordinate) compareTo(other Coordinate) int {
 	return 0
 }
 
-func (c *Coordinate) String() string {
+func (c Coordinate) String() string {
 	return fmt.Sprintf("(%g, %g, %g)", c.x, c.y, c.z)
 }
 
