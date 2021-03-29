@@ -8,9 +8,10 @@ import (
 )
 
 type Coordinate struct {
-	x float64
-	y float64
-	z float64
+	x          float64
+	y          float64
+	z          float64
+	dimensions int
 }
 
 const (
@@ -42,12 +43,14 @@ func NewEmptyCoordinate() Coordinate {
 
 // Constructs a Coordinate at (x,y,NaN).
 func NewXYCoordinate(x, y float64) Coordinate {
-	return NewCoordinate(x, y, NullOrdinate)
+	result := NewCoordinate(x, y, NullOrdinate)
+	result.dimensions = 2
+	return result
 }
 
 // Constructs a Coordinate at (0,0,NaN)
 func NewXYEmptyCoordinate() Coordinate {
-	return NewCoordinate(0, 0, NullOrdinate)
+	return NewXYCoordinate(0, 0)
 }
 
 func (c *Coordinate) setCoordinate(other *Coordinate) {
@@ -124,9 +127,6 @@ func (c *Coordinate) equalInZ(other *Coordinate, tolerance float64) bool {
 // the x and y ordinates.
 // Since Coordinates are 2.5D, this routine ignores the z value when making the comparison.
 func (c *Coordinate) equals(other *Coordinate) bool {
-	if !(other == c) {
-		return false
-	}
 	return c.equals2D(other)
 }
 
@@ -168,4 +168,17 @@ func (c *Coordinate) distance3D(other *Coordinate) float64 {
 	dy := c.y - other.y
 	dz := c.z - other.z
 	return math.Sqrt(dx*dx + dy*dy + dz*dz)
+}
+
+func (c *Coordinate) measure() int {
+	return 0 // TODO: add support for M dimension
+}
+
+func (c *Coordinate) clone() Coordinate {
+	return Coordinate{
+		x:          c.x,
+		y:          c.y,
+		z:          c.z,
+		dimensions: c.dimensions,
+	}
 }
